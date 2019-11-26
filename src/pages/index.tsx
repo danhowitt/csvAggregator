@@ -160,7 +160,7 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
     var blob = new Blob([csvContent],{type: 'text/csv;charset=utf-8;'});
     var url = URL.createObjectURL(blob);
     pom.href = url;
-    pom.setAttribute('download', `${this.state.fileName[0]}_aggregated${this.state.aggregatebyColumns.join('_')}.csv`);
+    pom.setAttribute('download', `${this.state.fileName.split('.')[0]}_grouped_by_${this.state.aggregatebyColumns.join('_')}.csv`);
     pom.click();
     
     // console.log('lines', this.state.dataLines.length);
@@ -215,7 +215,7 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
         </CardText>
 
         {this.state.numericColumns.length > 0 && (
-            <CardText>Adjustment percentages for each numeric field</CardText>
+            <CardText>Enter percentages for each numeric field</CardText>
         )}
 
         {this.state.numericColumns.map((columnName) => 
@@ -230,7 +230,7 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
         )}
 
         {this.state.dataLines.length > 0 && (
-          <CardText>Group by</CardText>
+          <CardText>Aggregate numeric columns and group by</CardText>
         )}
 
         {this.state.dataLines.length > 0 && (
@@ -249,7 +249,7 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
             </div>
           </div>
 
-        )};
+        )}
       </Card>
     )
   }
