@@ -1,0 +1,45 @@
+{
+  "name": "gatsby-starter-typescript",
+  "description": "Gatsby TypeScript starter",
+  "version": "1.0.0",
+  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "dependencies": {
+    "@types/bignumber.js": "^5.0.0",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^8.0.7",
+    "@types/react": "15.0.21",
+    "@types/react-dom": "0.14.23",
+    "bignumber": "^1.1.0",
+    "bootstrap": "^4.3.1",
+    "gatsby": "^1.9.119",
+    "gatsby-link": "^1.6.28",
+    "gatsby-plugin-react-helmet": "^1.0.8",
+    "gatsby-plugin-typescript": "^1.4.10",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "papaparse": "^5.1.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "reactstrap": "^8.1.1"
+  },
+  "keywords": [
+    "gatsby, typescript"
+  ],
+  "license": "MIT",
+  "main": "n/a",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "format": "prettier --parser typescript --trailing-comma es5 --no-semi --single-quote --write \"src/**/*.ts*\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.0.2",
+    "@types/reactstrap": "^8.0.6",
+    "prettier": "^1.8.2"
+  },
+  "contributors": [
+    "fabien0102 <fabien0102@gmail.com>",
+    "Hays Clark <hays.clark@gmail.com>"
+  ]
+}
