@@ -5,7 +5,6 @@ import { Card, CardText, CardTitle, Button, InputGroup, Input, InputGroupAddon, 
 import { parse as csvParse, unparse } from 'papaparse'
 import * as moment from 'moment'
 import {BigNumber} from 'bignumber.js'
-import { groupBy } from 'lodash';
 
 // Please note that you can use https://github.com/dotansimha/graphql-code-generator
 // to generate all types from graphQL schema
@@ -19,7 +18,7 @@ interface IndexPageProps {
   }
 }
 
-
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
 
 export default class extends React.Component<IndexPageProps, { fileName: string, aggregatebyColumns: string[], columns: string[], numericColumns: string[], dateColumns: string[], dataLines: string[][], adjustments: { [columnName: string]: number } }> {
   constructor(props: IndexPageProps, context: any) {
@@ -50,6 +49,19 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
   handleFile(fileList: FileList) {
     const file = fileList[0];
     var reader = new FileReader();
+
+    this.setState({
+     
+        columns: [],
+        numericColumns: [],
+        dateColumns: [],
+        dataLines: [],
+        adjustments: {},
+        aggregatebyColumns: [],
+        fileName: ''
+      
+    })
+
     reader.onload = () => {
       const fileText = reader.result as string;
       const parsed =  csvParse(fileText);
@@ -70,7 +82,7 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
 
       const dateColumns = columns.filter((_, columnIndex) => {
         return dataLines.every(line => {
-          return moment(line[columnIndex]).isValid();
+          return moment.utc(line[columnIndex]).isValid();
         });
       });
 
@@ -95,29 +107,31 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
     const adjustments = this.state.adjustments;
     const adjustmentColumns = Object.keys(adjustments);
 
-    const newCsv = this.state.dataLines.map(line => {
-      const newLine = [...line];
-      const adjustmentColumns = Object.keys(adjustments);
-      //const adjustmentvalues = Object.values(adjustments);
+    // const newCsv = this.state.dataLines.map(line => {
+    //   const newLine = [...line];
+     
+    //   adjustmentColumns.forEach(adjustmentColumnName => {
+    //     const adjustmentPercentage = adjustments[adjustmentColumnName];
+    //     const columnValue = line[this.state.columns.indexOf(adjustmentColumnName)];
 
-      adjustmentColumns.forEach(adjustmentColumnName => {
-        const adjustmentPercentage = adjustments[adjustmentColumnName];
-        const columnValue = line[this.state.columns.indexOf(adjustmentColumnName)];
+    //     if (adjustmentPercentage && columnValue) {
+    //       console.log(columnValue)
+    //       const adjustedValue = new BigNumber(columnValue).dividedBy(100).multipliedBy(adjustmentPercentage).toFixed(8);
+    //       console.log(adjustedValue)
+    //       newLine[this.state.columns.indexOf(adjustmentColumnName)] = adjustedValue;
+    //     }
+    //   });
 
-        if (adjustmentPercentage && columnValue) {
-          const adjustedValue = new BigNumber(columnValue).dividedBy(100).multipliedBy(adjustmentPercentage).toFixed(8);
-          newLine[this.state.columns.indexOf(adjustmentColumnName)] = adjustedValue;
-        }
-      });
+    //   return newLine;
+    // });
 
-      return newLine;
-    });
+    const newCsv = [ ... this.state.dataLines];
 
-    const grouped = this.groupByMultiple(this.state.dataLines, (line: string[]) => {
+    const grouped = this.groupByMultiple(newCsv, (line: string[]) => {
       return this.state.aggregatebyColumns.map(aggregateColumn => {
         const idx = this.state.columns.indexOf(aggregateColumn);
         if (this.state.dateColumns.indexOf(aggregateColumn) > -1) {
-          line[idx] = moment(line[idx]).startOf('day').toISOString();
+          line[idx] = moment.utc(line[idx]).startOf('day').format("YYYY-MM-DD HH:mm:ss");
 
         }
         return line[idx];
