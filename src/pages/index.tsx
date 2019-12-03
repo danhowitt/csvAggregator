@@ -102,29 +102,7 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
   }
 
   download() {
-    //const newCSV = unparse(parsed.data);
-
     const adjustments = this.state.adjustments;
-    const adjustmentColumns = Object.keys(adjustments);
-
-    // const newCsv = this.state.dataLines.map(line => {
-    //   const newLine = [...line];
-     
-    //   adjustmentColumns.forEach(adjustmentColumnName => {
-    //     const adjustmentPercentage = adjustments[adjustmentColumnName];
-    //     const columnValue = line[this.state.columns.indexOf(adjustmentColumnName)];
-
-    //     if (adjustmentPercentage && columnValue) {
-    //       console.log(columnValue)
-    //       const adjustedValue = new BigNumber(columnValue).dividedBy(100).multipliedBy(adjustmentPercentage).toFixed(8);
-    //       console.log(adjustedValue)
-    //       newLine[this.state.columns.indexOf(adjustmentColumnName)] = adjustedValue;
-    //     }
-    //   });
-
-    //   return newLine;
-    // });
-
     const newCsv = [ ... this.state.dataLines];
 
     const grouped = this.groupByMultiple(newCsv, (line: string[]) => {
@@ -138,28 +116,24 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
       });
     });
 
-    
-
     console.log('group count', grouped.length);
     
     const reducer =  grouped.map(group => {
-        return group.reduce((aggregateLine: any, currentLine: any, idx: any, array: any) => {
+        return group.reduce((aggregateLine: any, currentLine: any, idx: any) => {
           this.state.numericColumns.forEach((numericColumnName) => {
             const numericColumnIndex = this.state.columns.indexOf(numericColumnName);
-            const currentAggregateValue = aggregateLine[numericColumnIndex];
-            const lineValue = currentLine[numericColumnIndex];
-    
-            let newAggregateValue = new BigNumber(currentAggregateValue).plus(lineValue);
-            if (adjustments[numericColumnName] && idx === array.length - 1) {
-              newAggregateValue = newAggregateValue.dividedBy(100).multipliedBy(adjustments[numericColumnName]);
+            let lineValue = new BigNumber(currentLine[numericColumnIndex]);
+            
+            if (adjustments[numericColumnName]) {
+               lineValue = lineValue.dividedBy(100).multipliedBy(adjustments[numericColumnName]);
             }
-            aggregateLine[numericColumnIndex] = newAggregateValue.toFixed(8)
-          });
-          return aggregateLine;
-        });
-      })
+            aggregateLine[numericColumnIndex] = new BigNumber(idx === 0 ? 0 : aggregateLine[numericColumnIndex]).plus(lineValue).toFixed(8);
+          })
 
-    console.log(reducer.length)
+          
+          return aggregateLine;
+        }, [...group.length > 0 ? group[0] : []]);
+      });
     
     
     const csv = unparse({
@@ -167,8 +141,6 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
       data: reducer
     })
 
-
-    
     var pom = document.createElement('a');
     var csvContent=csv; //here we load our csv data 
     var blob = new Blob([csvContent],{type: 'text/csv;charset=utf-8;'});
@@ -176,32 +148,6 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
     pom.href = url;
     pom.setAttribute('download', `${this.state.fileName.split('.')[0]}_grouped_by_${this.state.aggregatebyColumns.join('_')}.csv`);
     pom.click();
-    
-    // console.log('lines', this.state.dataLines.length);
-  //console.log('grouped', reducer)
-
-
-    // console.log('oldCsv', this.state.dataLines);
-    // console.log('newCsv', newCsv);
-
- 
-
-    // const groups = groupBy(this.state.dataLines, (line: string[]) => {
-    //   const dateColumnName = this.state.dateColumns[0];
-    //   const lineIdx = this.state.columns.indexOf(dateColumnName);
-    //   console.log(line[lineIdx])
-    //   return moment(line[lineIdx]).startOf('day').toISOString();
-    // });
-
-
-    // console.log(groups)
-    // console.log(this.state.aggregatebyColumns)
-
-
-    
-  
-
-    //console.log('fileText', reader.result);
   }
 
   toggleGroupBy(aggregatebyColumn: string) {
