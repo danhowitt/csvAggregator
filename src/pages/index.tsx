@@ -68,7 +68,7 @@ export default class extends React.Component<IndexPageProps, { fileName: string,
 
       const lines = parsed.data as string[][];
       const columns = lines[0] as string[];
-      const dataLines = lines.splice(1);
+      const dataLines = lines.splice(1).filter(x => x.length > 1);
 
       this.setState({
         dataLines
