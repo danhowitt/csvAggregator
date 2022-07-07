@@ -16,7 +16,7 @@
     "gatsby-plugin-react-helmet": "^1.0.8",
     "gatsby-plugin-typescript": "^1.4.10",
     "lodash": "^4.17.15",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "papaparse": "^5.1.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
